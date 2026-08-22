@@ -17,6 +17,7 @@ html, body {
     overflow-x: auto;
     overflow-y: hidden;
     gap: 10px;
+    position: fixed;
 }
 
 h5 {
