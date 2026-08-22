@@ -128,10 +128,12 @@ h5 {
 
   width: 100%;
   max-width: 100%;
+  min-width: 0;
 
   /* width: 250px;
   max-width: 250px; */
   margin: 15px 0px;
+  overflow: hidden;
 }
 
 .sidepanel h5 {
@@ -143,7 +145,7 @@ h5 {
 
 hr {
   background-color: #1B1B1B;
-  width: calc(100% + 30px);
+  width: 100%;
   margin: 0px;
   padding: 0px;
   height: 0.5px;
@@ -200,8 +202,9 @@ button.selected {
 #eraserProperties,
 #cantingProperties, 
 #paintDabberProperties {
-  width: 250px;
-  flex-shrink: 0;
+  width: 100%;
+  min-width: 0;
+  flex-shrink: 1;
   display: none;
 }
 
@@ -311,8 +314,11 @@ button.selected {
   gap: 15px;
 }
 
+.sidepanel > hr,
 .layersContainer hr {
-  margin: 0 -15px;
+  width: calc(100% + 30px);
+  margin-left: -15px;
+  margin-right: -15px;
 }
 
 .layers {
@@ -485,19 +491,33 @@ button.selected {
 /* Tablet version */
 @media (max-width: 1200px) {
 
+  html,
+  body {
+    overflow: hidden;
+  }
+
   .leftColumn {
-    width: 220px;
-    min-width: 220px;
+    width: 200px;
+    min-width: 200px;
   }
 
   .rightColumn {
-    width: 220px;
-    min-width: 220px;
+    width: 200px;
+    min-width: 200px;
   }
+
+  .tool {
+    width: 100%;
+    transform: none;
+  }
+
+  /* #canvasContainer {
+    zoom: 0.75;
+  } */
 
   #canvasContainer canvas {
     width: min(
-      calc(100vw - 480px),
+      calc(100vw - 500px),
       900px
     );
     height: auto;
@@ -512,17 +532,22 @@ button.selected {
   }
 }
 
+/* Smaller than tablets */
 @media (max-width: 1000px) {
 
   .leftColumn {
-    width: 180px;
-    min-width: 180px;
+    width: 150px;
+    min-width: 150px;
   }
 
   .rightColumn {
-    width: 180px;
-    min-width: 180px;
+    width: 150px;
+    min-width: 150px;
   }
+
+  /* #canvasContainer {
+    zoom: 0.5;
+  } */
 
   #canvasContainer canvas {
     width: min(
