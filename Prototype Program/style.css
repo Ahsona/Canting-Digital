@@ -1,0 +1,471 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html, body {
+    background-color: #B3B3B3;
+    font-family: "Inter", sans-serif;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-start;
+    min-height: 100vh;
+    height: 100%;
+    width: 100%;
+    overflow: hidden;
+    gap: 10px;
+}
+
+body {
+    min-width: 1400px;
+}
+
+h5 {
+  font-size: 16px;
+  color: #1B1B1B;
+  font-weight: normal;
+  text-align: center;
+  user-select: none;
+}
+
+#canvasContainer {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 0;
+}
+
+#canvasWrapper {
+  position: relative;
+  flex: 1;
+  display: flex;
+  justify-content: center;
+}
+
+/* Boilling animation */
+.steam {
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.5);
+
+  animation:
+    steamRise 2s linear forwards;
+}
+
+@keyframes steamRise {
+  from {
+    transform:
+      translateY(0)
+      scale(1);
+    opacity: 1;
+  }
+
+  to {
+    transform:
+      translateY(-300px)
+      scale(2);
+    opacity: 0;
+  }
+}
+
+#steamOverlay {
+  position: fixed;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  pointer-events: none;
+}
+
+/* Side Panels */
+.leftColumn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  align-self: flex-start;
+  flex-shrink: 0;
+  margin-right: auto;
+  padding: 10px;
+  padding-left: 0px;
+  width: 250px;
+  gap: 0;
+}
+
+.rightColumn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex-shrink: 0;
+  margin-left: auto;
+  padding: 20px;
+  padding-right: 0px;
+  width: 250px;
+  gap: 0;
+}
+
+.sidepanel {
+  background-color: #D9D9D9;
+  border: 1px solid #1B1B1B;
+  border-radius: 5px;
+  box-shadow: 0px 4px 4px rgb(0 0 0/25%);
+  padding: 15px;
+  z-index: 1000;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+
+  width: 250px;
+  max-width: 250px;
+  margin: 15px 0px;
+}
+
+.sidepanel h5 {
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+  text-align: left;
+}
+
+hr {
+  background-color: #1B1B1B;
+  width: calc(100% + 30px);
+  margin: 0px;
+  padding: 0px;
+  height: 0.5px;
+  border: none;
+}
+
+.panelHeader {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-right: auto;
+  padding-left: 20px;
+}
+
+.icon {
+  aspect-ratio: 1/1;
+  object-fit: contain;
+  display: block;
+  background-repeat: no-repeat;
+  background-position: center;
+  height: 20px;
+}
+
+button {
+  background-color: #E9E9E9;
+  border: 1px solid #1B1B1B;
+  border-radius: 5px;
+  cursor: pointer;
+  place-items: center;
+}
+
+button:hover:not(:disabled) {
+  background-color: #cddffd;
+}
+
+button:active:not(:disabled) {
+  background-color: #acbddb;
+}
+
+button:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+button.selected {
+  background-color: #cddffd;
+}
+
+.tool.selected {
+  transform: translateX(-15px);
+}
+
+#pencilProperties,
+#eraserProperties,
+#cantingProperties, 
+#paintDabberProperties {
+  width: 250px;
+  flex-shrink: 0;
+  display: none;
+}
+
+#cantingProperties {
+  display: block;
+}
+
+.toolPanel {
+  flex-shrink: 0;
+}
+
+.toolOptions {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.tool {
+  box-shadow: 0px 4px 4px rgb(0 0 0/25%);
+  margin: 0px;
+  padding: 5px;
+  width: 120%;
+  transform: translateX(-45px);
+}
+
+.tool img {
+  object-fit: contain;
+  display: block;
+  width: 100%;
+  aspect-ratio: 3.5/1;
+}
+
+.toolProperties {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 10px 15px;
+  width: 100%;
+}
+
+.brushSizeContainer {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  width: 100%;
+}
+
+.brushSize {
+  -webkit-appearance: none;
+  appearance: none;
+  cursor: pointer;
+  outline: none;
+  width: 100%;
+  min-width: 0;
+  flex: 1;
+}
+
+.brushSizeValue {
+  width: 20px;
+  min-width: 20px;
+  text-align: center;
+  flex-shrink: 0;
+}
+
+.brushSize::-webkit-slider-runnable-track {
+  background-color: #E9E9E9;
+  border: 1px solid #1B1B1B;
+  height: 5px;
+}
+
+.brushSize::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  margin-top: -3px;
+  height: 10px;
+  width: 25px;
+  border: 1px solid #1B1B1B;
+  border-radius: 3px;
+  background-color: #1B1B1B;
+}
+
+.nozzleTypeContainer {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+}
+
+.nozzleType {
+  padding: 5px;
+  aspect-ratio: 1/1;
+  width: 40px;
+}
+
+.nozzleType img {
+  object-fit: contain;
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+/* Layer Windows */
+
+.layersContainer {
+  display: flex;
+  flex-wrap: wrap;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.layersContainer hr {
+  margin: 0 -15px;
+}
+
+.layers {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  align-items: center;
+  justify-content: space-between;
+  background-color: #E9E9E9;
+  border: 1px solid #1B1B1B;
+  border-radius: 5px;
+  place-items: center;
+  width: 220px;
+  height: 50px;
+  cursor: pointer;
+  padding: 10px;
+  margin-bottom: 5px;
+  gap: 10px;
+}
+
+.layers.selectedLayer {
+  background-color: #cddffd;
+}
+
+.layerThumbnail {
+  background-color: #E9E9E9;
+  border: 1px solid #1B1B1B;
+  border-radius: 5px;
+  width: 60px;
+  height: 100%;
+  flex-shrink: 0;
+  overflow: hidden;
+}
+
+.layerThumbnail img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.layerHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.layerButton {
+  padding: 5px 8px;
+  width: 100px;
+  flex-shrink: 0;
+  text-wrap: balance;
+}
+
+.layerButton:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.viewLayer {
+  width: 20px;
+  height: 20px;
+  padding: 1px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  border: 0px;
+}
+
+.viewLayer img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  display: block;
+}
+
+.addLayer {
+  width: 20px;
+  height: 22px;
+  font-size: 22px;
+  justify-content: center;
+  border: 0px;
+  background-color: #D9D9D9;
+  margin-right: 10px;
+}
+
+#sketchButtonsContainer {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1px;
+}
+
+#insertImage {
+  aspect-ratio: 1/1;
+  width: 22px;
+  align-items: center;
+  padding-top: 2px;
+}
+
+#insertImage img {
+  object-fit: contain;
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+/* Opacity Slider */
+.opacityContainer {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 90%;
+}
+
+.opacity {
+  -webkit-appearance: none;
+  appearance: none;
+  cursor: pointer;
+  outline: none;
+  width: 100%;
+  min-width: 0;
+  flex: 1;
+}
+
+.opacityValue {
+  width: 20px;
+  min-width: 20px;
+  text-align: center;
+  flex-shrink: 0;
+}
+
+.opacity::-webkit-slider-runnable-track {
+  background-color: #E9E9E9;
+  border: 1px solid #1B1B1B;
+  height: 5px;
+}
+
+.opacity::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  margin-top: -3px;
+  height: 10px;
+  width: 25px;
+  border: 1px solid #1B1B1B;
+  border-radius: 3px;
+  background-color: #1B1B1B;
+}
+
+#opacityIcon {
+  aspect-ratio: 1/1;
+  width: 18px;
+  align-items: center;
+  border: 1px solid #1B1B1B;
+  border-radius: 2px;
+  margin-left: 2px;
+}
+
+#opacityIcon img {
+  object-fit: contain;
+  display: block;
+  width: 100%;
+  height: 100%;
+}
