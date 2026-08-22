@@ -14,12 +14,9 @@ html, body {
     min-height: 100vh;
     height: 100%;
     width: 100%;
-    overflow: hidden;
+    overflow-x: auto;
+    overflow-y: hidden;
     gap: 10px;
-}
-
-body {
-    min-width: 1400px;
 }
 
 h5 {
@@ -83,6 +80,10 @@ h5 {
 }
 
 /* Side Panels */
+.leftColumn, .rightColumn {
+  width: clamp(180px, 20vw, 250px);
+}
+
 .leftColumn {
   display: flex;
   flex-direction: column;
@@ -92,7 +93,6 @@ h5 {
   margin-right: auto;
   padding: 10px;
   padding-left: 0px;
-  width: 250px;
   gap: 0;
 }
 
@@ -104,7 +104,6 @@ h5 {
   margin-left: auto;
   padding: 20px;
   padding-right: 0px;
-  width: 250px;
   gap: 0;
 }
 
@@ -122,7 +121,7 @@ h5 {
   gap: 10px;
 
   width: 250px;
-  max-width: 250px;
+  max-width: none;
   margin: 15px 0px;
 }
 
