@@ -87,6 +87,19 @@ function requestThumbnailUpdate() {
   needsThumbnailUpdate = true;
 }
 
+function windowResized() {
+  let targetWidth = min(
+    windowWidth - leftPanelWidth - rightPanelWidth,
+    900
+  );
+
+  let targetHeight = targetWidth * (600 / 900);
+  resizeCanvas(
+    targetWidth,
+    targetHeight
+  );
+}
+
 function setup() {
   pixelDensity(1);
   let canvas = createCanvas(canvasWidth, canvasHeight);
