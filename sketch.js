@@ -88,12 +88,16 @@ function requestThumbnailUpdate() {
 }
 
 function windowResized() {
+  let leftPanelWidth =
+    document.querySelector(".leftColumn").offsetWidth;
+  let rightPanelWidth =
+    document.querySelector(".rightColumn").offsetWidth;
   let targetWidth = min(
     windowWidth - leftPanelWidth - rightPanelWidth,
     900
   );
-
-  let targetHeight = targetWidth * (600 / 900);
+  let targetHeight =
+    targetWidth * (600 / 900);
   resizeCanvas(
     targetWidth,
     targetHeight
@@ -102,7 +106,20 @@ function windowResized() {
 
 function setup() {
   pixelDensity(1);
-  let canvas = createCanvas(canvasWidth, canvasHeight);
+  let leftPanelWidth =
+    document.querySelector(".leftColumn").offsetWidth;
+  let rightPanelWidth =
+    document.querySelector(".rightColumn").offsetWidth;
+  let targetWidth = min(
+    windowWidth - leftPanelWidth - rightPanelWidth,
+    900
+  );
+  let targetHeight =
+    targetWidth * (600 / 900);
+  let canvas = createCanvas(
+    targetWidth,
+    targetHeight
+  );
   canvas.parent("canvasContainer");
   canvas.mouseOver(() => {
     showBrushCursor = true;
