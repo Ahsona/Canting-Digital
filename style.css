@@ -498,13 +498,13 @@ button.selected {
   }
 
   .leftColumn {
-    width: 200px;
-    min-width: 200px;
+    width: 160px;
+    min-width: 160px;
   }
 
   .rightColumn {
-    width: 200px;
-    min-width: 200px;
+    width: 160px;
+    min-width: 160px;
   }
 
   .tool {
