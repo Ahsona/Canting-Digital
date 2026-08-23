@@ -87,39 +87,9 @@ function requestThumbnailUpdate() {
   needsThumbnailUpdate = true;
 }
 
-function windowResized() {
-  let leftPanelWidth =
-    document.querySelector(".leftColumn").offsetWidth;
-  let rightPanelWidth =
-    document.querySelector(".rightColumn").offsetWidth;
-  let targetWidth = min(
-    windowWidth - leftPanelWidth - rightPanelWidth,
-    900
-  );
-  let targetHeight =
-    targetWidth * (600 / 900);
-  resizeCanvas(
-    targetWidth,
-    targetHeight
-  );
-}
-
 function setup() {
   pixelDensity(1);
-  let leftPanelWidth =
-    document.querySelector(".leftColumn").offsetWidth;
-  let rightPanelWidth =
-    document.querySelector(".rightColumn").offsetWidth;
-  let targetWidth = min(
-    windowWidth - leftPanelWidth - rightPanelWidth,
-    900
-  );
-  let targetHeight =
-    targetWidth * (600 / 900);
-  let canvas = createCanvas(
-    targetWidth,
-    targetHeight
-  );
+  canvas = createCanvas(canvasWidth, canvasHeight);
   canvas.parent("canvasContainer");
   canvas.mouseOver(() => {
     showBrushCursor = true;
@@ -194,7 +164,6 @@ function ensureWaxLayer() {
 }
 
 function ensurePaintLayer() {
-
   if (paintLayers.length === 0) {
 
     const newPaintLayer =
