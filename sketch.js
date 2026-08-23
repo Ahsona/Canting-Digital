@@ -32,8 +32,15 @@ let currentWaxLayer = 0;
 let currentPaintLayer = 0;
 let currentSketchLayer = 0;
 
+// Canvas size and responsive web design
 let canvasWidth = 900;
 let canvasHeight = 600;
+
+let artX = 0;
+let artY = 0;
+
+let prevArtX = 0;
+let prevArtY = 0;
 
 // Fabric and boilling animation
 let fabricTexture;
@@ -87,6 +94,13 @@ function requestThumbnailUpdate() {
   needsThumbnailUpdate = true;
 }
 
+// Add warning to prevent refreshing webpage
+window.addEventListener("beforeunload", (event) => {
+  event.preventDefault();
+  event.returnValue = "";
+});
+
+// Setup
 function setup() {
   pixelDensity(1);
   canvas = createCanvas(canvasWidth, canvasHeight);
@@ -100,6 +114,14 @@ function setup() {
   // Start with NO layers.
   // Layers will be created only when they are actually needed.
   updateLayerThumbnails();
+
+  // Download button
+  const downloadButton =
+    document.getElementById("downloadButton");
+
+  downloadButton.addEventListener("click", () => {
+    saveCanvas("my-batik", "png");
+  });
 
   //Fabric noise
   fabricNoise = new Float32Array(
@@ -217,6 +239,7 @@ function ensureSketchLayer() {
 }
 
 function draw() {
+  updateArtworkCoordinates();
   background(240);
   // Base cloth
   image(
@@ -685,10 +708,10 @@ function drawStroke(layer, strokeColor, size) {
   layer.strokeJoin(ROUND);
   // Main wax line
   layer.line(
-    pmouseX,
-    pmouseY,
-    mouseX,
-    mouseY
+    prevArtX,
+    prevArtY,
+    artX,
+    artY
   );
   // Very subtle irregularity
   if (size >= 2) {
@@ -2498,10 +2521,10 @@ function eraseStroke(layer, size) {
   layer.strokeCap(ROUND);
   layer.stroke(255);
   layer.line(
-    pmouseX,
-    pmouseY,
-    mouseX,
-    mouseY
+    prevArtX,
+    prevArtY,
+    artX,
+    artY
   );
   ctx.restore();
 }
@@ -2513,6 +2536,14 @@ function isInsideCanvas() {
     mouseY >= 0 &&
     mouseY <= height
   );
+}
+
+function updateArtworkCoordinates() {
+  prevArtX = artX;
+  prevArtY = artY;
+
+  artX = mouseX;
+  artY = mouseY;
 }
 
 // Adding Layers System
