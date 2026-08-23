@@ -518,7 +518,7 @@ button.selected {
 
   #canvasContainer canvas {
     width: min(
-      calc(100vw - 500px),
+      calc(100vw - 400px),
       900px
     );
     height: auto;
@@ -552,7 +552,7 @@ button.selected {
 
   #canvasContainer canvas {
     width: min(
-      calc(100vw - 380px),
+      calc(100vw - 280px),
       900px
     );
     height: auto;
