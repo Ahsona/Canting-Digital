@@ -31,6 +31,8 @@
           <div class = "toolOptions">
             <button class = "tool" id = "pencilTool"><img class = "pencil" src = "images/PencilTool.png"></button>
             <button class = "tool" id = "eraserTool"><img class = "eraser" src = "images/EraserTool.png"></button>
+            <hr>
+            <hr>
             <button class = "tool selected" id = "cantingTool"><img class = "canting" id = "canting1" src = "images/CantingTool1.png"></button>
             <button class = "tool" id = "paintDabberTool"><img class = "paintdabber" src = "images/PaintDabberTool.png"></button>
           </div>
@@ -125,6 +127,7 @@
     <!-- Right column: Layer bar -->
     <div class = "rightColumn">
       <div>
+        <button id="resetButton" class="layerButton">Reset</button>
         <button id="downloadButton" class="layerButton">Download</button>
       </div>
       <!-- Layers Bar-->
@@ -160,14 +163,8 @@
           <div class = "layerHeader">
             <h5>Sketch Layer</h5>
             <div id = "sketchButtonsContainer">
-              <button class = "addLayer" id = "insertImage">
-                <img src = "images/InsertImage.png">
-                <input
-                  type="file"
-                  id="imageInput"
-                  accept="image/*"
-                  style="display: none;"
-                >
+              <button class="addLayer" id="insertImage">
+                <img src="images/InsertImage.png">
               </button>
               <button class = "addLayer" id = "addSketchLayerButton"><b>+</b></button>
             </div>
@@ -182,6 +179,28 @@
             <div class = "layerThumbnail" id = "sketchThumbnail"></div>
           </div> -->
           <div id="sketchLayersContainer"></div>
+        </div>
+      </div>
+    </div>
+        <!-- Pattern Library Modal -->
+    <div id="patternLibraryModal" class="modalOverlay">
+      <div class="patternLibrary">
+        <!-- Header -->
+        <div class="patternLibraryHeader">
+          <h3>Insert Image</h3>
+          <button id="closePatternLibrary">&times;</button>
+        </div>
+        <hr>
+        <!-- Pattern Grid -->
+        <div id="patternGrid" class="patternGrid"></div>
+        <!-- Footer -->
+        <div class="patternLibraryFooter">
+          <button id="cancelPatternButton">
+            Cancel
+          </button>
+          <button id="insertPatternButton" disabled>
+            Insert
+          </button>
         </div>
       </div>
     </div>
