@@ -360,23 +360,12 @@ function draw() {
       );
     }
   }
-  // Wax acts as a resist (OLD)
-  // if (
-  //   waxLayers.length > 0 &&
-  //   paintLayers.length > 0 &&
-  //   waxLayers[currentWaxLayer] &&
-  //   paintLayers[currentPaintLayer]
-  // ) {
-  //   paintLayers[currentPaintLayer].drawingContext.save();
-  //   paintLayers[currentPaintLayer].drawingContext.globalCompositeOperation =
-  //     "destination-out";
-  //   paintLayers[currentPaintLayer].image(
-  //     waxLayers[currentWaxLayer],
-  //     0,
-  //     0
-  //   );
-  //   paintLayers[currentPaintLayer].drawingContext.restore();
-  // }
+  // Composite PAINT layers
+  if (paintVisible) {
+    for (let i = 0; i < paintLayers.length; i++) {
+      image(paintLayers[i], 0, 0);
+    }
+  }
   // Composite SKETCH layers
   for (let i = 0; i < sketchLayers.length; i++) {
     if (sketchVisible[i]) {
@@ -388,12 +377,6 @@ function draw() {
     }
   }
   noTint();
-  // Composite PAINT layers
-  if (paintVisible) {
-    for (let i = 0; i < paintLayers.length; i++) {
-      image(paintLayers[i], 0, 0);
-    }
-  }
   // Composite current WAX
   if (
     waxVisible &&
