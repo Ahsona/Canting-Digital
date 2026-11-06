@@ -87,6 +87,8 @@ const sliderRefs = {
   paintDabberTool: document.querySelector("#paintDabberSizeSlider"),
 };
 
+let isPatternLibraryOpen = false;
+
 let needsThumbnailUpdate = false;
 const THUMBNAIL_UPDATE_INTERVAL = 120; // frames
 
@@ -121,6 +123,13 @@ function setup() {
 
   downloadButton.addEventListener("click", () => {
     saveCanvas("my-batik", "png");
+  });
+
+  // Reset Button
+  const resetButton = document.querySelector("#resetButton");
+
+  resetButton.addEventListener("click", function() {
+    location.reload();
   });
 
   //Fabric noise
@@ -239,6 +248,7 @@ function ensureSketchLayer() {
 }
 
 function draw() {
+  if (isPatternLibraryOpen) return;
   updateArtworkCoordinates();
   background(240);
   // Base cloth
@@ -670,24 +680,136 @@ addSketchLayerButton.addEventListener("click", function() {
   updateLayerThumbnails();
 });
 
-// Insert Image Button
-const insertImageButton = document.querySelector("#insertImage");
-const imageInput = document.querySelector("#imageInput");
+// =====================================
+// PATTERN LIBRARY
+// =====================================
+
+// Add your patterns here
+const patternLibrary = [
+  {
+    name: "Kawung",
+    src: "images/PresetPatterns/Simplified Patterns 900x600/Simple Kawung 900x600.png"
+  },
+  {
+    name: "Parang",
+    src: "images/PresetPatterns/Simplified Patterns 900x600/Simple Parang 900x600.png"
+  },
+  {
+    name: "Mega Mendung",
+    src: "images/PresetPatterns/Simplified Patterns 900x600/Simple Mega Mendung 900x600.png"
+  },
+  {
+    name: "Tujuh Rupa",
+    src: "images/PresetPatterns/Simplified Patterns 900x600/Simple Tujuh Rupa 900x600.png"
+  },
+  {
+    name: "Ikan Bali",
+    src: "images/PresetPatterns/Simplified Patterns 900x600/Simple Ikan Bali 900x600.png"
+  },
+  {
+    name: "Fuji",
+    src: "images/PresetPatterns/Simplified Patterns 900x600/Simple Fuji 900x600.png"
+  }
+];
+
+let selectedPattern = null;
+
+// =====================================
+// HTML ELEMENTS
+// =====================================
+const insertImageButton =
+  document.querySelector("#insertImage");
+const patternLibraryModal =
+  document.querySelector("#patternLibraryModal");
+const patternGrid =
+  document.querySelector("#patternGrid");
+const closePatternLibrary =
+  document.querySelector("#closePatternLibrary");
+const cancelPatternButton =
+  document.querySelector("#cancelPatternButton");
+const insertPatternButton =
+  document.querySelector("#insertPatternButton");
+
+// =====================================
+// OPEN PATTERN LIBRARY
+// =====================================
 insertImageButton.addEventListener("click", function() {
-  imageInput.click();
+  selectedPattern = null;
+  insertPatternButton.disabled = true;
+  renderPatternLibrary();
+
+  isPatternLibraryOpen = true;
+  patternLibraryModal.classList.add("active");
 });
 
-// When an image is selected
-imageInput.addEventListener("change", function(event) {
-  const file = event.target.files[0];
-  if (!file) {
+// =====================================
+// DISPLAY PATTERNS
+// =====================================
+function renderPatternLibrary() {
+  patternGrid.innerHTML = "";
+  patternLibrary.forEach(function(pattern) {
+    const card = document.createElement("div");
+    card.classList.add("patternCard");
+    const thumbnail = document.createElement("img");
+    thumbnail.src = pattern.src;
+    thumbnail.alt = pattern.name;
+    const name = document.createElement("p");
+    name.textContent = pattern.name;
+    card.appendChild(thumbnail);
+    card.appendChild(name);
+    // Select pattern
+    card.addEventListener("click", function() {
+      // Remove previous selection
+      document.querySelectorAll(".patternCard")
+        .forEach(function(item) {
+          item.classList.remove("selected");
+        });
+      // Highlight selected pattern
+      card.classList.add("selected");
+      selectedPattern = pattern;
+      insertPatternButton.disabled = false;
+    });
+    patternGrid.appendChild(card);
+  });
+}
+
+// =====================================
+// CLOSE PATTERN LIBRARY
+// =====================================
+
+function closePatternLibraryModal() {
+  patternLibraryModal.classList.remove("active");
+  selectedPattern = null;
+  insertPatternButton.disabled = true;
+
+  isPatternLibraryOpen = false;
+}
+
+closePatternLibrary.addEventListener(
+  "click",
+  closePatternLibraryModal
+);
+
+cancelPatternButton.addEventListener(
+  "click",
+  closePatternLibraryModal
+);
+
+
+// =====================================
+// INSERT SELECTED PATTERN
+// =====================================
+insertPatternButton.addEventListener("click", function() {
+  if (!selectedPattern) {
     return;
   }
+  const pattern = selectedPattern;
   ensureSketchLayer();
-  const imageURL = URL.createObjectURL(file);
-  loadImage(imageURL, function(img) {
+  loadImage(pattern.src, function(img) {
     const layer = sketchLayers[currentSketchLayer];
+    // Clear existing sketch layer
     layer.clear();
+    // Insert image
     layer.image(
       img,
       0,
@@ -696,7 +818,8 @@ imageInput.addEventListener("change", function(event) {
       canvasHeight
     );
     updateLayerThumbnails();
-    URL.revokeObjectURL(imageURL);
+    closePatternLibraryModal();
+
   });
 });
 
