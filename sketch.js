@@ -1276,45 +1276,51 @@ function depositPaint(
 
       // ------------------------------------------------
       // Mix with existing paint
+      // Darker paint covers lighter paint more easily.
+      // Lighter paint cannot easily cover darker paint.
       // ------------------------------------------------
 
       else {
+        // Calculate perceived brightness
+        const existingBrightness =
+          0.299 * sim.paint[idx + 0] +
+          0.587 * sim.paint[idx + 1] +
+          0.114 * sim.paint[idx + 2];
+
+        const incomingBrightness =
+          0.299 * paintR +
+          0.587 * paintG +
+          0.114 * paintB;
+
+        // Original wet-paint mixing strength
+        const baseMix =
+          addedWetness /
+          (oldWetness + addedWetness);
+
+        // Darker colors have more influence.
+        // Lighter colors still blend, but more gently.
+        const brightnessDifference =
+          existingBrightness - incomingBrightness;
+
+        const influence =
+          constrain(
+            1 + brightnessDifference / 200,
+            0.15,
+            1.75
+          );
 
         const mix =
-          addedWetness /
-          (
-            oldWetness +
-            addedWetness
-          );
+          min(0.95, baseMix * influence);
 
-        sim.paint[
-          idx + 0
-        ] =
-          lerp(
-            sim.paint[idx + 0],
-            paintR,
-            mix
-          );
+        sim.paint[idx + 0] =
+          lerp(sim.paint[idx + 0], paintR, mix);
 
-        sim.paint[
-          idx + 1
-        ] =
-          lerp(
-            sim.paint[idx + 1],
-            paintG,
-            mix
-          );
+        sim.paint[idx + 1] =
+          lerp(sim.paint[idx + 1], paintG, mix);
 
-        sim.paint[
-          idx + 2
-        ] =
-          lerp(
-            sim.paint[idx + 2],
-            paintB,
-            mix
-          );
+        sim.paint[idx + 2] =
+          lerp(sim.paint[idx + 2], paintB, mix);
       }
-
       sim.paint[
         idx + 3
       ] +=
