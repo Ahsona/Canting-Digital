@@ -24,7 +24,8 @@ let wasDrawing = false;
 
 let activeLayer;
 let waxVisible = true;
-let paintVisible = true;
+
+let paintVisible = [];
 let sketchVisible = [];
 let sketchOpacity = [];
 
@@ -209,6 +210,7 @@ function ensurePaintLayer() {
       newPaintLayer
     );
 
+    paintVisible.push(true);
     paintLocked.push(false);
 
     paintLayerSnapshots.push(null);
@@ -361,8 +363,8 @@ function draw() {
     }
   }
   // Composite PAINT layers
-  if (paintVisible) {
-    for (let i = 0; i < paintLayers.length; i++) {
+  for (let i = 0; i < paintLayers.length; i++) {
+    if (paintVisible[i]) {
       image(paintLayers[i], 0, 0);
     }
   }
@@ -679,6 +681,9 @@ addPaintLayerButton.addEventListener("click", function() {
 
   // Add it to the paint layer array
   paintLayers.push(newPaintLayer);
+
+  // Initialize visibility
+  paintVisible.push(true);
 
   // Create a corresponding paint simulation
   const newPaintSimulation =
@@ -1262,7 +1267,7 @@ function depositPaint(
       if (isWaxBlockingPaint(cell)) {
         continue;
       }
-      
+
       markPaintDirty(
         sim,
         px,
@@ -2840,7 +2845,7 @@ function updatePaintLayersUI() {
 
     const layerIcon = document.createElement("img");
 
-    if (paintVisible) {
+    if (paintVisible[i]) {
       layerIcon.src = "images/OpenEyeIcon.png";
     } else {
       layerIcon.src = "images/ClosedEyeIcon.png";
@@ -2848,11 +2853,12 @@ function updatePaintLayersUI() {
 
     layerButton.appendChild(layerIcon);
 
-    // Toggle visibility
+    // Toggle individual layer visibility
     layerButton.addEventListener("click", function(event) {
       event.stopPropagation();
 
-      paintVisible = !paintVisible;
+      paintVisible[i] = !paintVisible[i];
+
       updatePaintLayersUI();
     });
 
