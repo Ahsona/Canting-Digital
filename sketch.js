@@ -663,6 +663,44 @@ addSketchLayerButton.addEventListener("click", function() {
   updateLayerThumbnails();
 });
 
+// + Add Color Layer Button
+const addPaintLayerButton =
+  document.querySelector("#addPaintLayerButton");
+
+addPaintLayerButton.addEventListener("click", function() {
+
+  // Create a new empty color layer
+  const newPaintLayer = createGraphics(
+    canvasWidth,
+    canvasHeight
+  );
+
+  newPaintLayer.clear();
+
+  // Add it to the paint layer array
+  paintLayers.push(newPaintLayer);
+
+  // Create a corresponding paint simulation
+  const newPaintSimulation =
+    createPaintSimulation(
+      canvasWidth,
+      canvasHeight
+    );
+
+  paintSimulations.push(newPaintSimulation);
+
+  // Initialize lock and snapshot states
+  paintLocked.push(false);
+  paintLayerSnapshots.push(null);
+
+  // Make the new layer the current paint layer
+  currentPaintLayer = paintLayers.length - 1;
+
+  // Update layer thumbnails and UI
+  updateLayerThumbnails();
+
+});
+
 // =====================================
 // PATTERN LIBRARY
 // =====================================
@@ -1221,20 +1259,10 @@ function depositPaint(
         py *
         sim.width;
 
-      let blocked = false;
-      for (let w = 0; w < waxSimulations.length; w++) {
-        const waxSim = waxSimulations[w];
-        if (
-          waxSim &&
-          waxSim.resistMask[cell]
-        ) {
-          blocked = true;
-          break;
-        }
-      }
-      if (blocked) {
+      if (isWaxBlockingPaint(cell)) {
         continue;
       }
+      
       markPaintDirty(
         sim,
         px,
@@ -1373,12 +1401,18 @@ function drawPaintStroke(
 
   // Instead of one stamp per pixel,
   // use one stamp every ~3 display pixels.
+  const stampSpacing =
+    max(
+      1,
+      radius * 0.5
+    );
+
   const steps =
     max(
       1,
       ceil(
         distance /
-        PAINT_STAMP_SPACING
+        stampSpacing
       )
     );
 
@@ -1813,6 +1847,21 @@ function spreadPaint(
   }
 }
 
+function isWaxBlockingPaint(cell) {
+  for (let w = 0; w < waxSimulations.length; w++) {
+    const waxSim = waxSimulations[w];
+
+    if (
+      waxSim &&
+      waxSim.resistMask[cell]
+    ) {
+      return true;
+    }
+  }
+
+  return false;
+}
+
 function diffusePaint(
   sim,
   sourceCell,
@@ -1839,6 +1888,16 @@ function diffusePaint(
   const targetWet =
     src[target + 3];
 
+  // --------------------------------------------------
+  // Wax blocks paint from spreading.
+  // --------------------------------------------------
+
+  if (
+    isWaxBlockingPaint(sourceCell) ||
+    isWaxBlockingPaint(targetCell)
+  ) {
+    return;
+  }
 
   if (
     sourceWet <=
@@ -2755,56 +2814,75 @@ function updateLayerButtons() {
 }
 
 function updatePaintLayersUI() {
-  const container = document.querySelector("#paintLayersContainer");
+  const container =
+    document.querySelector("#paintLayersContainer");
+
   // Clear current UI
   container.innerHTML = "";
+
   // Show newest layer first
   for (let i = paintLayers.length - 1; i >= 0; i--) {
+
     // Main layer row
     const layerRow = document.createElement("div");
     layerRow.classList.add("layers");
-    // Eye / Lock button
+
+    // Highlight currently selected layer
+    if (i === currentPaintLayer) {
+      layerRow.classList.add("selectedLayer");
+    }
+
+    // -------------------------
+    // Eye / visibility button
+    // -------------------------
     const layerButton = document.createElement("button");
     layerButton.classList.add("viewLayer");
+
     const layerIcon = document.createElement("img");
-    if (paintLocked[i]) {
-      // Locked layer
-      layerIcon.src = "images/LockIcon.png";
+
+    if (paintVisible) {
+      layerIcon.src = "images/OpenEyeIcon.png";
     } else {
-      // Current editable layer
-      if (paintVisible) {
-        layerIcon.src = "images/OpenEyeIcon.png";
-      } else {
-        layerIcon.src = "images/ClosedEyeIcon.png";
-      }
-      // Only editable layer can toggle visibility
-      layerButton.addEventListener("click", function() {
-        paintVisible = !paintVisible;
-        updatePaintLayersUI();
-      });
+      layerIcon.src = "images/ClosedEyeIcon.png";
     }
+
     layerButton.appendChild(layerIcon);
+
+    // Toggle visibility
+    layerButton.addEventListener("click", function(event) {
+      event.stopPropagation();
+
+      paintVisible = !paintVisible;
+      updatePaintLayersUI();
+    });
+
+    // -------------------------
     // Thumbnail
+    // -------------------------
     const thumbnail = document.createElement("div");
     thumbnail.classList.add("layerThumbnail");
+
     const thumbnailImage = document.createElement("img");
-    if (paintLocked[i] && paintLayerSnapshots[i]) {
-      // Historical/fixed color
-      thumbnailImage.src =
-        paintLayerSnapshots[i].canvas.toDataURL();
-    } else {
-      // Current editable color layer
-      thumbnailImage.src =
-        paintLayers[i].canvas.toDataURL();
-    }
+
+    thumbnailImage.src =
+      paintLayers[i].canvas.toDataURL();
+
     thumbnail.appendChild(thumbnailImage);
-    // Assemble layer
+
+    // -------------------------
+    // Assemble layer row
+    // -------------------------
     layerRow.appendChild(layerButton);
     layerRow.appendChild(thumbnail);
-    // Grey out locked layers
-    if (paintLocked[i]) {
-      layerRow.style.opacity = "0.45";
-    }
+
+    // -------------------------
+    // Select layer
+    // -------------------------
+    layerRow.addEventListener("click", function() {
+      currentPaintLayer = i;
+      updatePaintLayersUI();
+    });
+
     container.appendChild(layerRow);
   }
 }
