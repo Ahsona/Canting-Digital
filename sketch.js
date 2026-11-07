@@ -33,6 +33,8 @@ let currentWaxLayer = 0;
 let currentPaintLayer = 0;
 let currentSketchLayer = 0;
 
+let defaultPattern;
+
 // Canvas size and responsive web design
 let canvasWidth = 900;
 let canvasHeight = 600;
@@ -103,6 +105,13 @@ window.addEventListener("beforeunload", (event) => {
   event.returnValue = "";
 });
 
+// Load default pattern when the app opens
+function preload() {
+  defaultPattern = loadImage(
+    "images/PresetPatterns/Simplified Patterns 900x600/Simple Mega Mendung 900x600.png"
+  );
+}
+
 // Setup
 function setup() {
   pixelDensity(1);
@@ -114,8 +123,31 @@ function setup() {
   canvas.mouseOut(() => {
     showBrushCursor = false;
   });
-  // Start with NO layers.
-  // Layers will be created only when they are actually needed.
+  // Create default pattern sketch layer
+  ensureSketchLayer();
+
+  // Draw the default pattern onto the layer
+  sketchLayers[currentSketchLayer].image(
+    defaultPattern,
+    0,
+    0,
+    canvasWidth,
+    canvasHeight
+  );
+
+  // Set the default pattern layer opacity
+  sketchOpacity[currentSketchLayer] = 35;
+
+  // Update opacity slider
+  const opacitySlider = document.querySelector("#opacitySlider");
+  const opacityValue = document.querySelector(".opacityValue");
+
+  if (opacitySlider && opacityValue) {
+    opacitySlider.value = 35;
+    opacityValue.textContent = "35%";
+  }
+
+  // Refresh layer thumbnails
   updateLayerThumbnails();
 
   // Download button
